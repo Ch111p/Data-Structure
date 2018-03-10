@@ -13,6 +13,7 @@ typedef struct Node{
 }node;
 
 void leftRotate(node* x){
+
     node* subNode = x -> right;
     x -> right = subNode -> left;
     if(subNode -> left != NULL){
@@ -34,6 +35,7 @@ void leftRotate(node* x){
 }
 
 void rightRotate(node* x){
+
     node* subNode = x -> left;
     x -> left = subNode -> right;
     if(subNode -> right != NULL){
@@ -54,8 +56,38 @@ void rightRotate(node* x){
     //建立起x和旋转节点的关系
 }
 
-int insertNode(node* Tree){
-    while()
+int insertFix(node* x){
+    
+}
+
+int insertNode(int key){
+
+    node* subNode = (node*)malloc(sizeof(node));
+    subNode -> num = key;
+    subNode -> color = RED;
+    subNode -> left = subNode -> right = NULL;
+    node* subHead = treeHead;
+    node* subParent = NULL;
+    //新建一个节点 并将头结点赋予一个临时变量
+    while(subHead != NULL){
+        subParent = subHead;
+        if(subHead -> num > key){
+            subHead = subHead -> left;
+        }else{
+            subHead = subHead -> right；
+        }
+    }
+    //向下遍历 找到插入点
+    subNode -> parent = subParent;
+    if(treeHead == NULL){
+        treeHead = subNode;
+    }else if(key < subParent -> num){
+        subParent -> left = subNode;
+    }else{
+        subParent -> right = subNode;
+    }
+    //连接父节点和子节点的联系
+    insertFix(subNode);
 }
 
 int searchNode(node* Tree){
