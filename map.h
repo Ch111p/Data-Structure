@@ -59,9 +59,9 @@ pForm fillForm(char** name,char** infor,int (*edgeInfo)[3],int vexNum,int eNum){
 char** findMin(pForm head,int start,int end){
     int* dis = (int*)malloc(sizeof(int) * head->vexNum);
     char** orderName = (char**)malloc(sizeof(char*) * (head->vexNum + 1));
-    memcpy(dis,&head->matrix[start * (head->vexNum - 1)],sizeof(int) * head->vexNum);
+    memcpy(dis,&head->matrix[start * (head->vexNum)],sizeof(int) * head->vexNum);
     for(int i = 0; i < head->vexNum; i++){
-        if(head->matrix[i] == -1){
+        if(dis[i] == -1){
             orderName[i] = NULL;
         }else{
             orderName[i] = (char*)malloc(sizeof(char) * 100);
@@ -70,22 +70,26 @@ char** findMin(pForm head,int start,int end){
     }
     bool* flag = (bool*)malloc(sizeof(bool) * head->vexNum);
     memset(flag,0,sizeof(bool) * head->vexNum);
+    flag[start] = 1;
     for(int i = 0; i < head->vexNum; i++){
         int minNum = 0;
-        int min = dis[0];
-        for(int j = 0; j < head->vexNum && dis[j] != -1 && !flag[j]; j++){
-            if(min < dis[j]){
+        int min = 0x7fffffff;
+        for(int j = 0; j < head->vexNum; j++){
+            if(dis[j] == -1 || flag[j]){
+                continue;
+            }
+            if(min > dis[j]){
                 min = dis[j];
                 minNum = j;
             }
         }
         flag[minNum] = 1;
-        for(int j = 0; j < head->vexNum && head->matrix[minNum * head->vexNum + j] != -1; j++){
+        for(int j = 0; j < head->vexNum; j++){
+            if(head->matrix[minNum * head->vexNum + j] == -1){
+                continue;
+            }
             if(dis[j] > dis[minNum] + head->matrix[minNum * head->vexNum + j] || dis[j] == -1){
                 dis[j] = dis[minNum] + head->matrix[minNum * head->vexNum + j];
-                if(j == end){
-                    orderName[head->vexNum] = (char*)dis[j];
-                }
                 if(orderName[j]){
                     free(orderName[j]);
                 }
@@ -170,7 +174,7 @@ void getRoads(int start,int end,pForm head,int* stack,int num){
     head->searchFlag[start] = 1;
     if(start == end){
         for(int i = 0; subStack[i + 1] != -1 && (i + 1) < head->vexNum; i++){
-            printf("%s->",head->info.name[i]);
+            printf("%s->",head->info.name[subStack[i]]);
         }
         printf("%s\n",head->info.name[end]);
         subStack[num] = -1;
